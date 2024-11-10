@@ -1,22 +1,39 @@
+
+
+/*
 #ifndef IMU_H
 #define IMU_H
 
-typedef struct imu
+typedef struct
 {
-    /* data */
-    float x;
-    float y;
-    float z;
-};
+    // data 
+    float theta_accel;
+    float theta_gyro;
+    float theta_filt;
+
+    // keep on values
+    float previous_theta_gyro;
+    float dt;
+    float alpha;
+
+    //mpu5060 reading stuff
+    float gyro_offsetY;
+
+}IMU_Values;
 
 
 void initIMU(void);
 
+void calibrateIMU(IMU_Values *imu);
+
 void printIMU(void);
 
-float getTilt(bool printAngle=false);
+void testfunction(float *testtt);
+
+void getTilt(IMU_Values  *imu);
 
 
 
 
 #endif
+*/

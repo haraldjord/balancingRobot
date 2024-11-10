@@ -1,4 +1,5 @@
-#include <Arduino.h>
+//#include <Arduino.h>
+/*
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -17,29 +18,54 @@ void initIMU(void){
             delay(10);
     }
 
-    mpu.setHighPassFilter(MPU6050_HIGHPASS_5_HZ);
+    mpu.setHighPassFilter(MPU6050_HIGHPASS_DISABLE);
     mpu.setMotionDetectionDuration(10);
-
+    mpu.setAccelerometerRange(MPU6050_RANGE_4_G);
+    mpu.setGyroRange(MPU6050_RANGE_250_DEG);
 
 }
 
 
-float getTilt(bool printAngle){
 
-    float theta;
+void calibrateIMU(IMU_Values *imu){
+    // make 200 measurement on gyro, and use average as offset.
+    imu->gyro_offsetY = 0; 
+
+    int i = 0;
+    float offsetSum = 0;
+    int n = 200;
     sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-
-    theta = -atan(a.acceleration.x/a.acceleration.z);
-
-    if (printAngle){
-        Serial.print("theta: \t");
-        Serial.print("radian = ");
-        Serial.print(theta);
-        Serial.print("\tangle = ");
-        Serial.println(theta*180/PI);
+    for (i;i<n;i++){
+        mpu.getEvent(&a, &g, &temp);
+        offsetSum = offsetSum + g.gyro.y;
+        delay(10);
     }
-    return theta;
+    imu->gyro_offsetY = offsetSum/n;
+    //Serial.print("Gyro Y offset: ");
+    Serial.println(imu->gyro_offsetY);
+}
+
+sensors_event_t a, g, temp;
+void getTilt(IMU_Values *imu){
+
+    
+    mpu.getEvent(&a, &g, &temp);
+    
+    imu->theta_accel = atan(a.acceleration.x/a.acceleration.z);
+    imu->theta_gyro = g.gyro.y;
+    imu->theta_gyro = imu->previous_theta_gyro + (g.gyro.y - imu->gyro_offsetY)*imu->dt;
+    //Serial.println(imu->dt);
+    // save prevois theta gyro for next calculation
+    imu->previous_theta_gyro = imu->theta_gyro;
+
+    //complimentary filter
+    imu->theta_filt = imu->alpha*imu->theta_gyro + (1-imu->alpha)*imu->theta_accel;
+     
+
+    char txtbuff[50];    
+    //sprintf(txtbuff, "Gyro Y: %f \n", g.gyro.y);
+    //Serial.println(txtbuff);   
+    //Serial.println(g.gyro.y); 
 
 }
 
@@ -54,5 +80,6 @@ Serial.print("AccelX:");
 Serial.println(a.acceleration.x);
 }
 
+*/
 
 

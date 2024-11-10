@@ -9,6 +9,6 @@ void motorDirection(bool left, bool right);
 
 void motorSpeed(char left, char right);
 
-void motorSpeedTest(char speed);
+void motorSpeedTest(int speed);
 
 #endif

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "motor.h"
+#include "math.h"
 
 
 
@@ -57,11 +58,16 @@ void motorSpeed(char left, char right){
 }
 
 
-void motorSpeedTest(char speed){
+void motorSpeedTest(int speed){
     if (speed>0)
-        motorDirection(true, true);
-    else
         motorDirection(false, false);
+    else
+        motorDirection(true, true);
+    speed = int(abs(speed));
+    //Debug speed
+    //Serial.print("motor speed: ");
+    //Serial.println(speed);
+    
     analogWrite(enB, speed);
     analogWrite(enA, speed);
 }

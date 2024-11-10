@@ -51,8 +51,9 @@ void setPIDconstant(PIDController *pid){
 }
 */
 
+
 bool getCommand(PIDController *pid){
-  
+  char str[200];
     bool newCommand = false;
   if (Serial.available()>0){
     String commandtxt = Serial.readStringUntil('\n');
@@ -63,7 +64,8 @@ bool getCommand(PIDController *pid){
     }
     if (command==1){
         newCommand = true;
-        Serial.println("what would you like to change? \nKp: 1 \nKi: 2 \nKd: 3\n");
+        sprintf(str, "what would you like to change? \nKp: 1 (%f) \nKi: 2 (%f) \nKd: 3 (%f)\nout: 4 (%f)", pid->Kp, pid->Ki, pid->Kd, pid->out);
+        Serial.println(str);
   while(Serial.available()==0){}
   String commandtxt = Serial.readStringUntil('\n');
   int command = commandtxt.toInt();
@@ -97,8 +99,18 @@ bool getCommand(PIDController *pid){
     Serial.print("New kd value: ");
     Serial.println(pid->Kd);
   }
+    else if (command==4){
+      Serial.print("out = ");
+      Serial.print(pid->Kd);
+      Serial.println("\tenter new pid.out value:");
+      while(Serial.available()==0){}
+      String command = Serial.readStringUntil('\n');
+      pid->out = command.toFloat();
+      Serial.print("New out value: ");
+      Serial.println(pid->out);
+  }
   else {
-    Serial.println("command not applicable, try again... \n\n");
+      Serial.println("command not applicable, try again... \n\n");
     }
 }
   }
